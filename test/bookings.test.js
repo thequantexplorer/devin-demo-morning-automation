@@ -2,8 +2,15 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { createStore, isWeekend } = require('../src/bookings');
 
-// A Tuesday in the team's next sprint.
-const SPRINT_DAY = '2026-09-15';
+// Next weekday a week or more from now, so the date never ends up in the past.
+function upcomingWeekday() {
+  const date = new Date();
+  date.setUTCDate(date.getUTCDate() + 7);
+  while ([0, 6].includes(date.getUTCDay())) date.setUTCDate(date.getUTCDate() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
+const SPRINT_DAY = upcomingWeekday();
 
 test('books a free desk', () => {
   const store = createStore();

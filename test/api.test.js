@@ -3,7 +3,15 @@ const assert = require('node:assert/strict');
 const request = require('supertest');
 const { createApp } = require('../src/app');
 
-const SPRINT_DAY = '2026-09-15';
+// Next weekday a week or more from now, so the date never ends up in the past.
+function upcomingWeekday() {
+  const date = new Date();
+  date.setUTCDate(date.getUTCDate() + 7);
+  while ([0, 6].includes(date.getUTCDay())) date.setUTCDate(date.getUTCDate() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
+const SPRINT_DAY = upcomingWeekday();
 
 test('GET /health', async () => {
   const res = await request(createApp()).get('/health');
